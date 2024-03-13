@@ -11,8 +11,16 @@ const cookieParser = require("cookie-parser");
 
 // ℹ️ Needed to accept requests from 'the outside'. CORS stands for cross origin resource sharing
 // unless the request is made from the same domain, by default express wont accept POST requests
-const cors = require("cors");
 
+// controls a very specific header to pass headers from the frontend
+const cors = require('cors');
+
+// To specifically allow requests from your domain:
+const corsOptions = {
+  origin: 'https://peak-threads.netlify.app',
+};
+
+app.use(cors(corsOptions));
 
 const FRONTEND_URL = "https://peak-threads.netlify.app" || "http://localhost:3000";
 
@@ -22,12 +30,8 @@ module.exports = (app) => {
   // Services like Fly use something called a proxy and you need to add this to your server
   app.set("trust proxy", 1);
 
-  // controls a very specific header to pass headers from the frontend
-  app.use(
-    cors({
-      origin: ["http://localhost:5173"],
-    })
-  );
+  
+  
 
   // In development environment the app logs
   app.use(logger("dev"));

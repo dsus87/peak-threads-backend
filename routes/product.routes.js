@@ -50,7 +50,7 @@ router.post('/:userId/register-products', isAuthenticated, isAdmin, upload.singl
 // GET /products/products - Retrieves all of the products
 router.get("/products", (req, res, next) => {
     Product.find()
-      .populate('sellerId') 
+      // .populate('sellerId') 
       .then((allProducts) => res.json(allProducts))
       .catch((err) => {
         console.error("Error while getting the products", err);
