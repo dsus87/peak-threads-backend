@@ -61,7 +61,9 @@ router.get("/products", (req, res, next) => {
 
 // GET /products/:productId - Get details of a specific product
 router.get('/:productId', async (req, res, next) => {
+  
   const { productId } = req.params;
+  console.log(req.params)
 
 
   try {
