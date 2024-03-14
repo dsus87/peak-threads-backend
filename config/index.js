@@ -20,7 +20,7 @@ const cors = require('cors');
   const corsOptions = {
     origin: '*', // Your Netlify domain
     credentials: true, // Allows cookies to be sent and received
-    optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204
+    optionsSuccessStatus: 200, 
   };
 
 
