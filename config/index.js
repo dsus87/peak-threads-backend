@@ -16,13 +16,14 @@ const cookieParser = require("cookie-parser");
 const cors = require('cors');
 
 // To specifically allow requests from your domain:
-const corsOptions = {
-  origin: 'https://peak-threads.netlify.app',
-};
 
-app.use(cors(corsOptions));
+  const corsOptions = {
+    origin: '*', // Your Netlify domain
+    credentials: true, // Allows cookies to be sent and received
+    optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204
+  };
 
-const FRONTEND_URL = "https://peak-threads.netlify.app" || "http://localhost:3000";
+
 
 // Middleware configuration
 module.exports = (app) => {
@@ -32,6 +33,7 @@ module.exports = (app) => {
 
   
   
+app.use(cors(corsOptions));
 
   // In development environment the app logs
   app.use(logger("dev"));
