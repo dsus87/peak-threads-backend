@@ -127,6 +127,16 @@ router.post("/login", (req, res, next) => {
 
 
 
+router.get('/:userId', isAuthenticated, async (req, res) => {
+const { userId } = req.params; 
+
+//get user information by ID 
+
+})
+
+
+
+
 // PUT :userId Updates the user's profile information. This endpoint requires authentication
 router.put('/:userId', upload.single('photo'), isAuthenticated, async (req, res) => {
   const { userId } = req.params; // Correctly access the userId parameter from the route

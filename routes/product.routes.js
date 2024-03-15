@@ -11,17 +11,18 @@ const { isAuthenticated, isAdmin, isGuest, allowAuthenticatedOrGuest } = require
 
 // POST /products/userId/register-product - Allows a registered user to list a new product for sale. Requires seller authentication.
 
-router.post('/:userId/register-products', isAuthenticated, isAdmin, upload.single('photo'), async (req, res, next) => {
+router.post('/register-product', isAuthenticated, isAdmin, upload.single('photo'), async (req, res, next) => {
   try {
     const { userId } = req.params;
     const sellerId = req.payload._id;
-
+    console.log(req.params)
+    console.log(req.payload._id)
     if (userId !== sellerId.toString()) {
       return res.status(403).json({ message: "Unauthorized: You can only add products to your own account." });
     }
 
     const { name, description, price, gender, category, brand, 'quantity[S]': quantityS, 'quantity[M]': quantityM, 'quantity[L]': quantityL } = req.body;
-
+    console.log(req.body)
     const photo = req.file ? req.file.path : null;
 
     // Create the product with the separated quantities
@@ -111,6 +112,25 @@ router.put('/update-products/:productId', isAuthenticated,  upload.single('photo
       next(error);
   }
 });
+
+
+// DELETE /products/delete-products/- Deletes an existing product
+
+router.delete('/delete-products/', isAuthenticated, async (req, res, next) => {
+  const { productId } = req.params;
+  const userId = req.user._id; 
+
+  try {
+      const product = await Product.findOne({ _id: productId, sellerId: userId });
+  
+      await Product.deleteOne({ _id: productId });
+
+      res.status(200).json({ message: "Product successfully deleted." });
+  } catch (error) {
+      next(error);
+  }
+});
+
 
 
 
