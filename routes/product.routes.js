@@ -11,14 +11,12 @@ const { isAuthenticated, isAdmin, isGuest, allowAuthenticatedOrGuest } = require
 
 // POST /products/userId/register-product - Allows a registered user to list a new product for sale. Requires seller authentication.
 
-router.post('/register-products', isAdmin, upload.single('photo'), async (req, res, next) => {
+router.post('/register-products', isAuthenticated, isAdmin, upload.single('photo'), async (req, res, next) => {
   try {
     const { userId } = req.params;
     const sellerId = req.payload._id;
 
-    if (userId !== sellerId.toString()) {
-      return res.status(403).json({ message: "Unauthorized: You can only add products to your own account." });
-    }
+  
 
     const { name, description, price, gender, category, brand, 'quantity[S]': quantityS, 'quantity[M]': quantityM, 'quantity[L]': quantityL } = req.body;
 
