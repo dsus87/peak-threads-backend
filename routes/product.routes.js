@@ -9,43 +9,21 @@ const upload = require('../middleware/cloudinary.middleware');
 const { isAuthenticated, isAdmin, isGuest, allowAuthenticatedOrGuest } = require("../middleware/jwt.middleware.js");
 
 
-router.post('/register-product', isAuthenticated, isAdmin, upload.single('photo'), async (req, res, next) => {
+// POST /products/userId/register-product - Allows a registered user to list a new product for sale. Requires seller authentication.
+
+router.post('/register-products', isAuthenticated, isAdmin, upload.single('photo'), async (req, res, next) => {
   try {
-    // Log to check if this route is hit
-    console.log("Register product route hit");
+    const { userId } = req.params;
+    const sellerId = req.payload._id;
 
-    // Assuming `isAuthenticated` and `isAdmin` middleware correctly set `req.payload`
-    console.log("Authenticated user ID from payload:", req.payload?._id);
-
-    // This should be `undefined` since `userId` is not in the route path
-    console.log("User ID from req.params (expected to be undefined):", req.params.userId);
-
-    // Basic request body logging
-    console.log("Request body:", req.body);
-
-    // Log if the file was uploaded and received
-    if (req.file) {
-      console.log("Uploaded file info:", req.file);
-    } else {
-      console.log("No file uploaded.");
-    }
-
-    // Check for user ID mismatch - Adjust this part according to your auth flow
-    const sellerId = req.payload?._id; // Ensure this matches how your auth system works
-    // Direct comparison without `toString` may not be necessary if both are already strings
-    if (!sellerId) {
-      return res.status(403).json({ message: "Unauthorized: No seller ID found in payload." });
+    if (userId !== sellerId.toString()) {
+      return res.status(403).json({ message: "Unauthorized: You can only add products to your own account." });
     }
 
     const { name, description, price, gender, category, brand, 'quantity[S]': quantityS, 'quantity[M]': quantityM, 'quantity[L]': quantityL } = req.body;
-    
-    // Ensure all required fields are present
-    if (!(name && description && price && category)) {
-      console.log("Missing required fields in request");
-      return res.status(400).json({ message: "Missing required product information." });
-    }
 
-    // Create the product with the separated quantities
+    const photo = req.file ? req.file.path : null;
+
     const savedProduct = await Product.create({
       name,
       description,
@@ -57,15 +35,13 @@ router.post('/register-product', isAuthenticated, isAdmin, upload.single('photo'
         M: quantityM || 0,
         L: quantityL || 0,
       },
-      photo: req.file ? req.file.path : null,
+      photo,
       brand,
       sellerId,
     });
 
-    console.log("Product saved:", savedProduct);
     res.status(201).json(savedProduct);
   } catch (error) {
-    console.error("Error in /register-product route:", error);
     next(error);
   }
 });
