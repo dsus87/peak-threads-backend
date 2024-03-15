@@ -112,19 +112,23 @@ router.put('/update-products/:productId', isAuthenticated,  upload.single('photo
 
 // DELETE /products/delete-products/- Deletes an existing product
 
-router.delete('/delete-products', isAdmin, async (req, res, next) => {
-  const { productId } = req.params;
-
+router.delete('/delete-products/:productId', isAdmin, async (req, res, next) => {
   try {
-      const product = await Product.findOne({ _id: productId });
-  
-      await Product.deleteOne({ _id: productId });
+    const { productId } = req.params; 
+    // Find and delete the product
+    const deletedProduct = await Product.findByIdAndDelete(productId);
 
-      res.status(200).json({ message: "Product successfully deleted." });
+    // Handle if the product doesn't exist
+    if (!deletedProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    res.status(200).json({ message: "Product successfully deleted." });
   } catch (error) {
-      next(error);
+    next(error); // Pass the error to your error-handling middleware
   }
 });
+
 
 
 
