@@ -11,10 +11,12 @@ const express = require("express");
 
 const app = express();
 
+app.use(cors());
+app.use(express.static("public"));
+app.use(express.json());
 
 // ℹ️ This function is getting exported from the config folder. It runs most pieces of middleware
 require("./config")(app);
-
 
 
 // 👇 Start handling routes here
@@ -30,13 +32,10 @@ app.use("/products", productRoutes);
 const orderRoutes = require("./routes/Order.routes");
 app.use("/order", orderRoutes); 
 
-
 const checkoutRoutes = require("./routes/checkout.routes");
 app.use("/checkout", checkoutRoutes); 
 
 // seperate route for guest users
-
-
 
 
 // ❗ To handle errors. Routes that don't exist or errors that you handle in specific routes

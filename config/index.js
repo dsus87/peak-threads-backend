@@ -18,7 +18,7 @@ const cors = require('cors');
 // To specifically allow requests from your domain:
 
   const corsOptions = {
-    origin: '*', // Your Netlify domain
+    origin: '*', // Netlify domain
     credentials: true, // Allows cookies to be sent and received
     optionsSuccessStatus: 200, 
   };
