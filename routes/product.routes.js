@@ -53,18 +53,18 @@ router.get("/products", (req, res, next) => {
       });
   });
 
-  // GET /products/category/:category
+  // // GET /products/category/:category
 
-  router.get('category/:category', (req, res, next) => {
-    const category = req.params.category; 
+  // router.get('category/:category', (req, res, next) => {
+  //   const category = req.params.category; 
   
-    Product.find({ category: category }) 
-      .then((products) => res.json(products))
-      .catch((err) => {
-        console.error("Error while getting products by category", err);
-        res.status(500).json({ message: "Error while getting products by category" });
-      });
-  });
+  //   Product.find({ category: category }) 
+  //     .then((products) => res.json(products))
+  //     .catch((err) => {
+  //       console.error("Error while getting products by category", err);
+  //       res.status(500).json({ message: "Error while getting products by category" });
+  //     });
+  // });
 
 
 // GET /products/:productId - Get details of a specific product
