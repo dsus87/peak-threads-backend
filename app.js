@@ -30,6 +30,10 @@ app.use("/products", productRoutes);
 const orderRoutes = require("./routes/Order.routes");
 app.use("/order", orderRoutes); 
 
+
+const checkoutRoutes = require("./routes/checkout.routes");
+app.use("/checkout", checkoutRoutes); 
+
 // seperate route for guest users
 
 
