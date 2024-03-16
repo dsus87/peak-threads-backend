@@ -16,7 +16,7 @@ router.post('/register-products', isAuthenticated, isAdmin, upload.single('photo
     const { userId } = req.params;
     const sellerId = req.payload._id;
 
-    const { name, description, price, gender, category, brand, 'quantity[S]': quantityS, 'quantity[M]': quantityM, 'quantity[L]': quantityL } = req.body;
+    const { name, description, price, gender, stripeId, category, brand, 'quantity[S]': quantityS, 'quantity[M]': quantityM, 'quantity[L]': quantityL } = req.body;
 
     const photo = req.file ? req.file.path : null;
 
@@ -34,6 +34,7 @@ router.post('/register-products', isAuthenticated, isAdmin, upload.single('photo
       photo,
       brand,
       sellerId,
+      stripeId
     });
 
     res.status(201).json(savedProduct);
