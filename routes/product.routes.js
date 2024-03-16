@@ -112,7 +112,7 @@ router.put('/update-products/:productId', isAuthenticated,  upload.single('photo
 
 router.delete('/delete-products/:productId', isAuthenticated, isAdmin, async (req, res, next) => {
   try {
-    const { productId } = req.params; 
+      const { productId } = req.params;
     const isAdmin = req.payload.isAdmin;
 
     console.log("Product ID to delete:", productId);

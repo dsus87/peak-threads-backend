@@ -126,13 +126,26 @@ router.post("/login", (req, res, next) => {
 });
 
 
+// PUT get/:userId get user info
 
-router.get('/:userId', isAuthenticated, async (req, res) => {
-const { userId } = req.params; 
+router.get('get/:userId', isAuthenticated, async (req, res) => {
+  const { userId } = req.params; 
 
-//get user information by ID 
+  try {
+    const user = await User.findById(userId).select('-password');
 
-})
+    if (!user) {
+      res.status(404).json({ message: "User not found." });
+      return; 
+    }
+
+    res.status(200).json(user);
+
+  } catch (error) {
+    console.error("Error fetching user:", error); 
+    res.status(500).json({ message: "Error fetching user information" });
+  }
+});
 
 
 

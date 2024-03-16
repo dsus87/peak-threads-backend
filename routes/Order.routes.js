@@ -37,7 +37,7 @@ router.post('/', isAuthenticated,  async (req, res, next) => {
     }
 });
 
-// GET /all-orders - Get all orders for the logged-in user
+// GET orders/all-orders - Get all orders for the logged-in user
 router.get('/all-orders', isAuthenticated, async (req, res, next) => {
     const userId = req.payload._id;
 
