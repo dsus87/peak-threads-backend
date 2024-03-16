@@ -42,6 +42,9 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  stripeId: {
+    type: String,
+  },
 });
 
 module.exports = model("Product", productSchema);
