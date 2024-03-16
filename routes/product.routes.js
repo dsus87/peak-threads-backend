@@ -16,8 +16,6 @@ router.post('/register-products', isAuthenticated, isAdmin, upload.single('photo
     const { userId } = req.params;
     const sellerId = req.payload._id;
 
-  
-
     const { name, description, price, gender, category, brand, 'quantity[S]': quantityS, 'quantity[M]': quantityM, 'quantity[L]': quantityL } = req.body;
 
     const photo = req.file ? req.file.path : null;
@@ -112,9 +110,13 @@ router.put('/update-products/:productId', isAuthenticated,  upload.single('photo
 
 // DELETE /products/delete-products/- Deletes an existing product
 
-router.delete('/delete-products/:productId', isAuthenticated,isAdmin, async (req, res, next) => {
+router.delete('/delete-products/:productId', isAuthenticated, isAdmin, async (req, res, next) => {
   try {
     const { productId } = req.params; 
+    const { userId, isAdmin } = req.params;
+    const sellerId = req.payload._id;
+
+    
     // Find and delete the product
     const deletedProduct = await Product.findByIdAndDelete(productId);
 
