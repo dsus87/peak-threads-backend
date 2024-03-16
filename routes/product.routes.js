@@ -53,9 +53,9 @@ router.get("/products", (req, res, next) => {
       });
   });
 
-  // GET /products/:category
+  // GET /products/category/:category
 
-  router.get('/:category', (req, res, next) => {
+  router.get('category/:category', (req, res, next) => {
     const category = req.params.category; 
   
     Product.find({ category: category }) 
