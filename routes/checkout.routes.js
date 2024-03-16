@@ -5,8 +5,9 @@ const router = express.Router();
 const stripe = require('stripe')(process.env.STRIPE_SECRET); 
 
 
-router.post("/checkout", async (req, res) => {
 
+router.post("/checkout", async (req, res) => {
+    console.log(process.env.STRIPE_SECRET)
     console.log(req.body);
     const items = req.body.items;
     let lineItems = [];
