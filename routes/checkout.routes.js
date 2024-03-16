@@ -4,12 +4,6 @@ const router = express.Router();
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET); 
 
-const app = express();
-app.use(cors());
-app.use(express.static("public"));
-app.use(express.json());
-
-
 
 router.post("/checkout", async (req, res) => {
 
