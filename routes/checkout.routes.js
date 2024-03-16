@@ -1,13 +1,9 @@
 const express = require ('express')
 
 var cors = require ('cors')
-const stripe = require ('stripe')('process.env.STRIPE_SECRET')
+const stripe = require('stripe')(process.env.STRIPE_SECRET); 
 
 
-stripe.config({
-   
-    STRIPE_SECRET: process.env.STRIPE_SECRET,
-});
 
 const app = express()
 app.use(cors())
