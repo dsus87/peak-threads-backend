@@ -1,17 +1,19 @@
-const express = require ('express')
 
-var cors = require ('cors')
+const express = require('express'); 
+const router = express.Router(); 
+
+var cors = require('cors');
 const stripe = require('stripe')(process.env.STRIPE_SECRET); 
 
+const app = express();
+app.use(cors());
+app.use(express.static("public"));
+app.use(express.json());
 
-const app = express()
-app.use(cors())
-app.use(express.static("public"))
-app.use(express.json())
 
 
 router.post("/checkout", async (req, res) => {
-
+    
     console.log(req.body);
     const items = req.body.items;
     let lineItems = [];
