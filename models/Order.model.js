@@ -15,12 +15,16 @@ const orderSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+
+  stripeSessionId: {
+    type: String,
+    required: true 
+},
+  
   shippingDetails: {
     name: String,
     address: String,
     city: String,
-    state: String,
-    zip: String,
   },
   products: [{
     productId: {
