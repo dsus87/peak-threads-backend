@@ -54,4 +54,12 @@ router.post("/checkout", async (req, res) => {
 });
 
 
+// route for redirecting to the success page
+router.get("/redirect-success", (req, res) => {
+
+    res.redirect('https://threads.netlify.app/success');
+});
+
+
+
 module.exports = router
