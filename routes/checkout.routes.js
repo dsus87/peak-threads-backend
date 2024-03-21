@@ -26,7 +26,7 @@ const app = express();
 
 
 
-app.post("/checkout", async (req, res) => {
+router.post("/checkout", async (req, res) => {
     console.log("Checkout route triggered!"); 
 
     console.log(req.body);
@@ -52,13 +52,6 @@ app.post("/checkout", async (req, res) => {
         url: session.url
     }));
 });
-
-
-
-
-
-  
-
 
 
 module.exports = router
