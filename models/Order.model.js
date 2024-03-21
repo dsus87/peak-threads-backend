@@ -18,7 +18,6 @@ const orderSchema = new mongoose.Schema({
 
   stripeSessionId: {
     type: String,
-    required: true 
 },
   
   shippingDetails: {
@@ -30,29 +29,24 @@ const orderSchema = new mongoose.Schema({
     productId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Product',
-      required: true,
     },
     quantity: {
       type: Number,
-      required: true,
     },
     size: {
       type: String,
       enum: ['S', 'M', 'L'],
-      required: true, // Consider making this required if all products have sizes
     },
     priceAtPurchase: {
       type: Number,
-      required: true, // Capture the price of the product at the time of purchase
     }
   }],
   totalPrice: {
     type: Number,
-    required: true,
   },
   paymentDetails: {
-    method: { type: String, required: true },
-    status: { type: String, enum: ['Paid', 'Pending', 'Failed'], required: true },
+    method: { type: String },
+    status: { type: String, enum: ['Paid', 'Pending', 'Failed']},
     transactionId: { type: String, required: false },
   },
   // Consider adding status to track the overall order status
@@ -60,7 +54,7 @@ const orderSchema = new mongoose.Schema({
     type: String,
     enum: ['New', 'Processing', 'Shipped', 'Delivered', 'Cancelled'],
     default: 'New',
-    required: true,
+
   },
 });
 

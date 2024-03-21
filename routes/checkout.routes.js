@@ -17,70 +17,47 @@ const User = require("../models/User.model.js")
 const Product = require("../models/Product.model.js")
 //const Cart = require("../models/Cart.model.js")
 
+
 const { isAuthenticated, isAdmin, isGuest, allowAuthenticatedOrGuest } = require("../middleware/jwt.middleware.js");
 
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET); 
+const app = express();
 
 
 
-router.post("/checkout", async (req, res) => {
+app.post("/checkout", async (req, res) => {
+
     console.log(req.body);
-    
     const items = req.body.items;
     let lineItems = [];
     items.forEach((item)=> {
         lineItems.push(
             {
-                price: item.stripeId,
+                price: item.id,
                 quantity: item.quantity
             }
         )
     });
-    try {
 
     const session = await stripe.checkout.sessions.create({
         line_items: lineItems,
         mode: 'payment',
-        success_url: "https://peak-threads.netlify.app/success?session_id={CHECKOUT_SESSION_ID}",
+        success_url: "https://peak-threads.netlify.app/success",
         cancel_url: "https://peak-threads.netlify.app/cancel"
     });
 
-
-     // Order creation (after successful payment)
-     const userId = req.payload ? req.payload._id : null; // Get userId from JWT payload
-    
-     const newOrder = new Order({
-        buyerId: userId, 
-        stripeSessionId: session.id, 
-        orderDate: Date.now(), // You can keep the default if you don't need to override 
-    
-        // Assuming you have these details in req.body
-        products: req.body.items.map(item => ({
-            name: item.name, // Snapshot of product name
-            quantity: item.quantity,
-            size: item.size,
-            priceAtPurchase: item.price,  // Or calculate if needed
-        })),
-            totalPrice: req.body.totalPrice,
-            paymentDetails: {
-                method: req.body.paymentMethod,
-                status: 'Paid', // Assuming successful payment
-        },
-    
-        // Start with 'New', you might update this later
-        status: 'New', 
-    });
-
-    
-        await newOrder.save();
-        res.send(JSON.stringify({ url: session.url }));
-    } catch (error) {
-        console.error("Error saving order: ", error);
-        // Handle error gracefully (e.g., redirect to an error page)
-    }
+    res.send(JSON.stringify({
+        url: session.url
+    }));
 });
 
 
 
-module.exports = router;
+
+
+  
+
+
+
+module.exports = router

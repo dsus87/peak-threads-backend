@@ -6,31 +6,31 @@ const { updateProductQuantities } = require('../middleware/Order.middleware.js')
 
 
 
-// POST /order - Create a new order
-router.post('/', isAuthenticated,  async (req, res, next) => {
-    console.log("Request Body:", req.body);
-    const { products, shippingDetails, totalPrice, paymentDetails, orderStatus } = req.body;
-    const buyerId = req.payload._id; 
+// // POST /order - Create a new order
+// router.post('/', isAuthenticated,  async (req, res, next) => {
+//     console.log("Request Body:", req.body);
+//     const { products, shippingDetails, totalPrice, paymentDetails, orderStatus } = req.body;
+//     const buyerId = req.payload._id; 
 
-    try {
-        // Create the order
-        const newOrder = await Order.create({
-            buyerId,
-            products,
-            shippingDetails,
-            totalPrice,
-            paymentDetails,
-            orderStatus: 'Pending', 
-        });
+//     try {
+//         // Create the order
+//         const newOrder = await Order.create({
+//             buyerId,
+//             products,
+//             shippingDetails,
+//             totalPrice,
+//             paymentDetails,
+//             orderStatus: 'Pending', 
+//         });
 
-        await updateProductQuantities(products);
+//         await updateProductQuantities(products);
 
-        res.status(201).json(newOrder);
-    } catch (error) {
-        console.error('Failed to create order:', error);
-        next(error);
-    }
-});
+//         res.status(201).json(newOrder);
+//     } catch (error) {
+//         console.error('Failed to create order:', error);
+//         next(error);
+//     }
+// });
 
 // GET orders/all-orders - Get all orders for the logged-in user
 router.get('/all-orders', isAuthenticated, async (req, res, next) => {
