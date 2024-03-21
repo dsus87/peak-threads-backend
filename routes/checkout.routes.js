@@ -61,5 +61,29 @@ router.get("/redirect-success", (req, res) => {
 });
 
 
+// order route 
+router.post('/create', async (req, res) => {
+    try {
+        const { user, items, totalCost } = req.body;
+
+        // Create a new order instance
+        const newOrder = new Order({
+            user,
+            items,
+            totalCost,
+            // orderDate is set by default to now
+            // status is set by default to Pending
+        });
+
+        // Save the order to the database
+        await newOrder.save();
+
+        res.status(201).json({ message: "Order created successfully", order: newOrder });
+    } catch (error) {
+        console.error("Order creation failed:", error);
+        res.status(500).json({ message: "Failed to create order" });
+    }
+});
+
 
 module.exports = router
