@@ -27,6 +27,7 @@ const app = express();
 
 
 app.post("/checkout", async (req, res) => {
+    console.log("Checkout route triggered!"); 
 
     console.log(req.body);
     const items = req.body.items;
