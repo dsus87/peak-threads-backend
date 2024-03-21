@@ -2,9 +2,6 @@
 const express = require('express'); 
 const router = express.Router(); 
 const Order = require('../models/Order.model'); 
-
-const express = require("express");
-
 const { v4: uuidv4 } = require('uuid');
 
 // ℹ️ Handles password encryption
@@ -27,8 +24,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET);
 
 
 
-router.post("/checkout",allowAuthenticatedOrGuest, async (req, res) => {
-    console.log(process.env.STRIPE_SECRET)
+router.post("/checkout", async (req, res) => {
     console.log(req.body);
     
     const items = req.body.items;
@@ -41,6 +37,7 @@ router.post("/checkout",allowAuthenticatedOrGuest, async (req, res) => {
             }
         )
     });
+    try {
 
     const session = await stripe.checkout.sessions.create({
         line_items: lineItems,
@@ -52,6 +49,7 @@ router.post("/checkout",allowAuthenticatedOrGuest, async (req, res) => {
 
      // Order creation (after successful payment)
      const userId = req.payload ? req.payload._id : null; // Get userId from JWT payload
+    
      const newOrder = new Order({
         buyerId: userId, 
         stripeSessionId: session.id, 
@@ -64,17 +62,17 @@ router.post("/checkout",allowAuthenticatedOrGuest, async (req, res) => {
             size: item.size,
             priceAtPurchase: item.price,  // Or calculate if needed
         })),
-        totalPrice: req.body.totalPrice,
-        paymentDetails: {
-           method: req.body.paymentMethod,
-           status: 'Paid', // Assuming successful payment
+            totalPrice: req.body.totalPrice,
+            paymentDetails: {
+                method: req.body.paymentMethod,
+                status: 'Paid', // Assuming successful payment
         },
     
         // Start with 'New', you might update this later
         status: 'New', 
     });
 
-     try {
+    
         await newOrder.save();
         res.send(JSON.stringify({ url: session.url }));
     } catch (error) {
