@@ -2,60 +2,48 @@ const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
 
 const orderSchema = new mongoose.Schema({
-  buyerId: {
+  user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: false, // Make it optional to accommodate orders by guests
+    required: true,
   },
-  guestId: { // Optional identifier for guest users
-    type: String,
-    required: false, // This or buyerId should be provided
+  // References the User who placed the order
+  items: [{
+    product: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Product',
+      required: true,
+    },
+    // References the Product being ordered
+    quantity: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
+    // Quantity of the Product
+    price: {
+      type: Number,
+      required: true,
+    },
+    // Price at the time of order in case it changes later
+  }],
+  // An array of item subdocuments, allowing multiple products in one order
+  totalCost: {
+    type: Number,
+    required: true,
   },
+  // Total cost of the order
   orderDate: {
     type: Date,
     default: Date.now,
   },
-
-  stripeSessionId: {
-    type: String,
-},
-  
-  shippingDetails: {
-    name: String,
-    address: String,
-    city: String,
-  },
-  products: [{
-    productId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Product',
-    },
-    quantity: {
-      type: Number,
-    },
-    size: {
-      type: String,
-      enum: ['S', 'M', 'L'],
-    },
-    priceAtPurchase: {
-      type: Number,
-    }
-  }],
-  totalPrice: {
-    type: Number,
-  },
-  paymentDetails: {
-    method: { type: String },
-    status: { type: String, enum: ['Paid', 'Pending', 'Failed']},
-    transactionId: { type: String, required: false },
-  },
-  // Consider adding status to track the overall order status
+  // The date when the order was placed
   status: {
     type: String,
-    enum: ['New', 'Processing', 'Shipped', 'Delivered', 'Cancelled'],
-    default: 'New',
-
+    enum: ['Pending', 'Completed', 'Shipped', 'Cancelled'],
+    default: 'Pending',
   },
+  // The status of the order
 });
 
 module.exports = model("Order", orderSchema);
