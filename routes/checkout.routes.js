@@ -63,6 +63,8 @@ router.get("/redirect-success", (req, res) => {
 
 // order route 
 router.post('/create', async (req, res) => {
+    console.log("Create route triggered!"); 
+
     try {
         const { user, items, totalCost } = req.body;
 
