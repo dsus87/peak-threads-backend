@@ -29,7 +29,7 @@ const orderRoutes = require("./routes/Order.routes");
 app.use("/order", orderRoutes); 
 
 const checkoutRoutes = require("./routes/checkout.routes");
-app.use("/checkout", checkoutRoutes); 
+app.use(checkoutRoutes); 
 
 
 // seperate route for guest users
