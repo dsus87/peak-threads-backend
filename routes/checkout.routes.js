@@ -25,29 +25,37 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET);
 const app = express();
 
 router.post("/checkout", async (req, res) => {
-    console.log("Checkout route triggered!");
-    console.log(req.body);
-
-    const { user, items, totalCost } = req.body;
+    const { items, totalCost, guestToken } = req.body;
+    let user = req.body.user;
 
     try {
-        // Create a new order in the database first
-        const newOrder = new Order({
-            user,
+        const orderData = {
             items,
             totalCost,
-        });
+        };
 
-        // Save the order to the database
+        if (user) {
+            // If it's an authenticated user's order, add user ID to the order data
+            orderData.user = user;
+        } else if (guestToken) {
+            // If it's a guest's order, add the guest token to the order data
+            orderData.guestToken = guestToken;
+        } else {
+            // If neither a user ID nor a guest token is provided, return an error
+            return res.status(400).json({ message: "Order must be placed by an authenticated user or a guest." });
+        }
+
+        // Create a new order with the constructed order data
+        const newOrder = new Order(orderData);
         const savedOrder = await newOrder.save();
 
-        // Prepare line items for Stripe session
+        // Prepare line items for the Stripe checkout session
         let lineItems = items.map(item => ({
             price: item.stripeId,
             quantity: item.quantity
         }));
 
-        // Create Stripe checkout session with order ID as metadata
+        // Create a Stripe checkout session with the order ID as metadata
         const session = await stripe.checkout.sessions.create({
             line_items: lineItems,
             mode: 'payment',
@@ -56,12 +64,68 @@ router.post("/checkout", async (req, res) => {
             metadata: { orderId: savedOrder._id.toString() }
         });
 
+        // Respond with the URL to the Stripe checkout session
         res.json({ url: session.url });
     } catch (error) {
         console.error("Checkout process failed:", error);
         res.status(500).json({ message: "Failed to process checkout" });
     }
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// router.post("/checkout", async (req, res) => {
+//     console.log("Checkout route triggered!");
+//     console.log(req.body);
+
+//     const { items, totalCost, guestToken } = req.body;
+//     let user = req.body.user; 
+
+//     try {
+//         // Create a new order in the database first
+//         const newOrder = new Order({
+//             user,
+//             items,
+//             totalCost,
+//         });
+
+//         // Save the order to the database
+//         const savedOrder = await newOrder.save();
+
+//         // Prepare line items for Stripe session
+//         let lineItems = items.map(item => ({
+//             price: item.stripeId,
+//             quantity: item.quantity
+//         }));
+
+//         // Create Stripe checkout session with order ID as metadata
+//         const session = await stripe.checkout.sessions.create({
+//             line_items: lineItems,
+//             mode: 'payment',
+//             success_url: `https://peak-threads.netlify.app/success?orderId=${savedOrder._id}`,
+//             cancel_url: "https://peak-threads.netlify.app/cancel",
+//             metadata: { orderId: savedOrder._id.toString() }
+//         });
+
+//         res.json({ url: session.url });
+//     } catch (error) {
+//         console.error("Checkout process failed:", error);
+//         res.status(500).json({ message: "Failed to process checkout" });
+//     }
+// });
 
 // router.post("/checkout", async (req, res) => {
 //     console.log("Checkout route triggered!"); 

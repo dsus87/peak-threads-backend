@@ -5,7 +5,11 @@ const orderSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true,
+    required: false // Make it not required if you will use a guestToken
+  },
+  guestToken: {
+    type: String,
+    required: false // This field is required only for orders made by guests
   },
   // References the User who placed the order
   items: [{
