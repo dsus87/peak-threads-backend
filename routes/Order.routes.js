@@ -38,11 +38,13 @@ const { updateProductQuantities } = require('../middleware/Order.middleware.js')
 
 router.get('/all-orders', isAuthenticated, isAdmin, async (req, res, next) => {
     try {
-        const orders = await Order.find({});
+        const orders = await Order
+        .find({})
+        .populate('items.product');
         res.status(200).json(orders);
     } catch (error) {
         console.error('Failed to retrieve orders:', error);
-        next(error);
+        res.status(500).json({ message: 'Failed to retrieve orders.' });
     }
 });
 
