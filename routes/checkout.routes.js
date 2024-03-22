@@ -24,34 +24,73 @@ const { isAuthenticated, isAdmin, isGuest, allowAuthenticatedOrGuest } = require
 const stripe = require('stripe')(process.env.STRIPE_SECRET); 
 const app = express();
 
-
-
 router.post("/checkout", async (req, res) => {
-    console.log("Checkout route triggered!"); 
-
+    console.log("Checkout route triggered!");
     console.log(req.body);
-    const items = req.body.items;
-    let lineItems = [];
-    items.forEach((item)=> {
-        lineItems.push(
-            {
-                price: item.stripeId,
-                quantity: item.quantity
-            }
-        )
-    });
 
-    const session = await stripe.checkout.sessions.create({
-        line_items: lineItems,
-        mode: 'payment',
-        success_url: "https://peak-threads.netlify.app/success",
-        cancel_url: "https://peak-threads.netlify.app/cancel"
-    });
+    const { user, items, totalCost } = req.body;
 
-    res.send(JSON.stringify({
-        url: session.url
-    }));
+    try {
+        // Create a new order in the database first
+        const newOrder = new Order({
+            user,
+            items,
+            totalCost,
+        });
+
+        // Save the order to the database
+        const savedOrder = await newOrder.save();
+
+        // Prepare line items for Stripe session
+        let lineItems = items.map(item => ({
+            price: item.stripeId,
+            quantity: item.quantity
+        }));
+
+        // Create Stripe checkout session with order ID as metadata
+        const session = await stripe.checkout.sessions.create({
+            line_items: lineItems,
+            mode: 'payment',
+            success_url: `https://peak-threads.netlify.app/success?orderId=${savedOrder._id}`,
+            cancel_url: "https://peak-threads.netlify.app/cancel",
+            metadata: { orderId: savedOrder._id.toString() }
+        });
+
+        res.json({ url: session.url });
+    } catch (error) {
+        console.error("Checkout process failed:", error);
+        res.status(500).json({ message: "Failed to process checkout" });
+    }
 });
+
+// router.post("/checkout", async (req, res) => {
+//     console.log("Checkout route triggered!"); 
+
+//     console.log(req.body);
+//     const items = req.body.items;
+//     let lineItems = [];
+//     items.forEach((item)=> {
+//         lineItems.push(
+//             {
+//                 price: item.stripeId,
+//                 quantity: item.quantity
+//             }
+//         )
+//     });
+
+//     const session = await stripe.checkout.sessions.create({
+//         line_items: lineItems,
+//         mode: 'payment',
+//        // success_url: "https://peak-threads.netlify.app/success",
+//        success_url: `https://peak-threads.netlify.app/success?sessionId={CHECKOUT_SESSION_ID}`,
+
+//         cancel_url: "https://peak-threads.netlify.app/cancel"
+//     });
+
+//     res.send(JSON.stringify({
+//         url: session.url
+//     }));
+// });
 
 
 // route for redirecting to the success page
