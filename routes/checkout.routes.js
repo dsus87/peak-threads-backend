@@ -77,16 +77,6 @@ router.post("/checkout", async (req, res) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
 // router.post("/checkout", async (req, res) => {
 //     console.log("Checkout route triggered!");
 //     console.log(req.body);
