@@ -55,19 +55,14 @@ router.get('/all-orders', isAuthenticated, async (req, res, next) => {
     const isAdmin = req.payload.isAdmin; 
 
     try {
-        let query = {};
-        if (!isAdmin) {
-            // If not an admin, fetch only the orders for the authenticated user
-            query.buyerId = userId;
-        }
-        // For admins, the query remains {} which fetches all orders
-
-        const orders = await Order.find(query).populate('items.product');
+        let query = isAdmin ? {} : { buyerId: userId }; // Admins get all orders, non-admins get only their orders
         
+        const orders = await Order.find(query).populate('items.product');
+
         if (orders.length === 0) {
             return res.status(404).json({ message: "No orders found." });
         }
-        
+
         res.status(200).json(orders);
     } catch (error) {
         console.error('Failed to retrieve orders:', error);
