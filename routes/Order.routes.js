@@ -55,7 +55,7 @@ router.get('/all-orders', isAuthenticated, async (req, res, next) => {
     const isAdmin = req.payload.isAdmin; 
 
     try {
-        let query = isAdmin ? {} : { buyerId: userId };
+        let query = isAdmin ? {} : { user: userId };
         
         const orders = await Order.find(query).populate('items.product');
 
