@@ -55,13 +55,9 @@ router.get('/all-orders', isAuthenticated, async (req, res, next) => {
     const isAdmin = req.payload.isAdmin; 
 
     try {
-        let query = isAdmin ? {} : { buyerId: userId }; // Admins get all orders, non-admins get only their orders
+        let query = isAdmin ? {} : { buyerId: userId };
         
         const orders = await Order.find(query).populate('items.product');
-
-        if (orders.length === 0) {
-            return res.status(404).json({ message: "No orders found." });
-        }
 
         res.status(200).json(orders);
     } catch (error) {
