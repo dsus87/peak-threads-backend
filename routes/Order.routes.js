@@ -50,6 +50,7 @@ const { updateProductQuantities } = require('../middleware/Order.middleware.js')
 
 
 router.get('/all-orders', isAuthenticated, async (req, res, next) => {
+    console.log(req.payload);
     const userId = req.payload._id;
     const isAdmin = req.payload.isAdmin; 
 
