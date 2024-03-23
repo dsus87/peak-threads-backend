@@ -36,11 +36,37 @@ const { updateProductQuantities } = require('../middleware/Order.middleware.js')
 
 // ALL orders for admin
 
-router.get('/all-orders', isAuthenticated, isAdmin, async (req, res, next) => {
+// router.get('/all-orders', isAuthenticated, isAdmin, async (req, res, next) => {
+//     try {
+//         const orders = await Order
+//         .find({})
+//         .populate('items.product');
+//         res.status(200).json(orders);
+//     } catch (error) {
+//         console.error('Failed to retrieve orders:', error);
+//         res.status(500).json({ message: 'Failed to retrieve orders.' });
+//     }
+// });
+
+
+router.get('/all-orders', isAuthenticated, async (req, res, next) => {
+    const userId = req.payload._id;
+    const isAdmin = req.payload.isAdmin; 
+
     try {
-        const orders = await Order
-        .find({})
-        .populate('items.product');
+        let query = {};
+        if (!isAdmin) {
+            // If not an admin, fetch only the orders for the authenticated user
+            query.buyerId = userId;
+        }
+        // For admins, the query remains {} which fetches all orders
+
+        const orders = await Order.find(query).populate('items.product');
+        
+        if (orders.length === 0) {
+            return res.status(404).json({ message: "No orders found." });
+        }
+        
         res.status(200).json(orders);
     } catch (error) {
         console.error('Failed to retrieve orders:', error);
@@ -64,7 +90,7 @@ module.exports = router;
 //     }
 // });
 
-// GET /api/orders/:orderId - Get details of a specific order
+// GET /orders/:orderId - Get details of a specific order
 router.get('/:orderId', isAuthenticated, async (req, res, next) => {
     const { orderId } = req.params;
     const userId = req.payload._id;
